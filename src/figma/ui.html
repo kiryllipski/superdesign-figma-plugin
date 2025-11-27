@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemini designer v3 by codex</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d11;
+      --panel: #11141b;
+      --muted: #9aa3b5;
+      --border: #1f2633;
+      --accent: #6de1d6;
+      --accent-strong: #3ac7b8;
+      --danger: #ff7b7b;
+      --text: #e9edf5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(109,225,214,0.07), transparent 35%),
+                  radial-gradient(circle at 80% 0%, rgba(83,115,255,0.08), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+    }
+    .app {
+      padding: 18px 18px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .title {
+      font-size: 18px;
+      letter-spacing: 0.2px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title .pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(61,207,194,0.16), rgba(88,120,255,0.12));
+      color: var(--accent);
+      border: 1px solid rgba(109,225,214,0.25);
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 13px;
+      transition: border 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: rgba(109,225,214,0.6);
+      box-shadow: 0 0 0 1px rgba(109,225,214,0.35);
+      background: rgba(109,225,214,0.03);
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    .row { display: flex; gap: 10px; }
+    .row > .half { flex: 1; }
+    button {
+      background: linear-gradient(135deg, #6de1d6, #5373ff);
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(83,115,255,0.25);
+    }
+    button.secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .status {
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .status strong { color: var(--accent); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(109,225,214,0.08);
+      color: var(--accent);
+      border: 1px solid rgba(109,225,214,0.2);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    ul.minor { padding-left: 18px; margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .chip-list { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .chip { padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.05); color: var(--muted); font-size: 12px; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">Gemini designer v3 <span class="pill">gemini-3-pro-preview</span></div>
+      <div class="subtitle">Generate screens, flows, personas, and boards directly in Figma.</div>
+    </header>
+
+    <div class="card">
+      <label for="apiKey">Gemini API key</label>
+      <div class="row">
+        <div class="half"><input id="apiKey" type="password" placeholder="Paste Google AI Studio key" /></div>
+        <div style="width: 120px"><button id="saveKey" class="secondary" type="button">Save</button></div>
+      </div>
+      <div class="hint">Stored locally via <code>figma.clientStorage</code>. Key is required for generation.</div>
+      <div id="keyStatus" class="hint" style="margin-top:6px;color:var(--accent);"></div>
+    </div>
+
+    <form id="designerForm" class="card" autocomplete="off">
+      <div class="row">
+        <div class="half">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="screen">App screens</option>
+            <option value="user-flow">User flow</option>
+            <option value="personas">User personas</option>
+            <option value="architecture">Architecture map</option>
+            <option value="storyboard">Storyboard</option>
+          </select>
+        </div>
+        <div class="half">
+          <label for="frameCount">Frames</label>
+          <input id="frameCount" type="number" min="1" max="6" value="3" />
+        </div>
+      </div>
+
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" placeholder="E.g. Dark fintech dashboard with quick transfer, portfolio trends, activity feed" required></textarea>
+
+      <div class="hint">Outputs minimal dark-theme frames with hierarchy, typography, and spacing.</div>
+      <div class="chip-list">
+        <div class="chip">Dark minimalism</div>
+        <div class="chip">Auto-layout ready</div>
+        <div class="chip">Gemini 3 Pro</div>
+      </div>
+
+      <div class="row" style="margin-top:12px; align-items: center;">
+        <div class="half"><button id="generate" type="submit">Generate with Gemini</button></div>
+        <div class="half"><button id="clear" class="secondary" type="button">Reset prompt</button></div>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="badge">Status</div>
+      <div id="status" class="status" style="margin-top:8px;">Waiting for prompt.</div>
+      <ul class="minor">
+        <li>Modes map to Figma pages/frames: screens, flows, personas, architecture, storyboard.</li>
+        <li>Layouts use grid spacing with consistent typography.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const apiKeyInput = document.getElementById('apiKey');
+    const saveKeyButton = document.getElementById('saveKey');
+    const statusEl = document.getElementById('status');
+    const keyStatus = document.getElementById('keyStatus');
+    const form = document.getElementById('designerForm');
+    const promptEl = document.getElementById('prompt');
+    const modeEl = document.getElementById('mode');
+    const frameCountEl = document.getElementById('frameCount');
+    const generateButton = document.getElementById('generate');
+    const clearButton = document.getElementById('clear');
+
+    function setStatus(text, tone = 'info') {
+      statusEl.textContent = text;
+      statusEl.style.borderColor = tone === 'error' ? 'rgba(255,123,123,0.25)' : 'var(--border)';
+      statusEl.style.color = tone === 'error' ? 'var(--danger)' : 'var(--text)';
+    }
+
+    function post(message) {
+      parent.postMessage({ pluginMessage: message }, '*');
+    }
+
+    saveKeyButton.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      post({ type: 'save-api-key', apiKey: key });
+    });
+
+    clearButton.addEventListener('click', () => {
+      promptEl.value = '';
+      setStatus('Prompt cleared.');
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const prompt = promptEl.value.trim();
+      if (!prompt) {
+        setStatus('Enter a prompt to generate.', 'error');
+        return;
+      }
+      generateButton.disabled = true;
+      setStatus('Calling Gemini 3 Pro for structured layout...');
+      post({
+        type: 'generate-design',
+        prompt,
+        mode: modeEl.value,
+        frameCount: Number(frameCountEl.value) || 3,
+        apiKey: apiKeyInput.value.trim() || undefined,
+      });
+    });
+
+    window.onmessage = (event) => {
+      const message = event.data.pluginMessage;
+      if (!message) return;
+      if (message.type === 'api-key-loaded') {
+        if (message.apiKey) {
+          apiKeyInput.value = message.apiKey;
+          keyStatus.textContent = 'Key loaded from local storage.';
+        }
+      } else if (message.type === 'api-key-saved') {
+        keyStatus.textContent = 'Key saved locally.';
+        keyStatus.style.color = 'var(--accent)';
+      } else if (message.type === 'status') {
+        setStatus(message.text, message.tone);
+        generateButton.disabled = message.state === 'busy';
+      } else if (message.type === 'generation-complete') {
+        setStatus('Frames added to canvas. You can regenerate or refine.');
+        generateButton.disabled = false;
+      } else if (message.type === 'generation-error') {
+        setStatus(message.error, 'error');
+        generateButton.disabled = false;
+      }
+    };
+
+    // Load saved key on boot
+    post({ type: 'load-api-key' });
+  </script>
+</body>
+</html>

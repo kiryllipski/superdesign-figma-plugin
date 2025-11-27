@@ -1,5 +1,24 @@
 # 🧠 SuperDesign — AI Design Agent for Your IDE
 
+## ✨ Gemini designer v3 by codex — Figma plugin
+
+Dark, minimalist generator for Figma that talks directly to **Gemini 3 Pro**. Prompt the agent to create full screens, user flows, personas, architecture maps, or storyboards as ready-to-edit frames.
+
+**How to run**
+- Install dependencies, then `npm run build:figma` to compile `dist/figma/code.js` and copy the UI.
+- Import `manifest.json` inside Figma (Plugins → Development → Import plugin from manifest) and open the plugin.
+- Paste your Google AI Studio key in the plugin UI; it is stored locally using `figma.clientStorage`.
+
+**Generation modes**
+- **App screens**: hero, cards, and CTAs aligned to a dark grid.
+- **User flow**: sequential steps with concise actions.
+- **User personas**: names, roles, goals, pains, and tools.
+- **Architecture**: subsystem cards with interfaces and data touchpoints.
+- **Storyboard**: beats with what the user sees and feels.
+
+The plugin builds frames with dark-surface panels, Inter typography, and accent color `#6de1d6` for a consistent minimalist look.
+
+
 **🆕 New:** [SuperDesign Chrome Extension](https://chromewebstore.google.com/detail/obpjaonipoaomjnokbimppohbpjibflm) - Clone any website & UI
 
 ---
