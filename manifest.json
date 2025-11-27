@@ -1,0 +1,16 @@
+{
+  "name": "Gemini designer v3 by codex",
+  "id": "gemini-designer-v3-codex",
+  "api": "1.0.0",
+  "main": "dist/figma/code.js",
+  "ui": "dist/figma/ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://generativelanguage.googleapis.com"
+    ]
+  },
+  "relaunchButtons": [
+    { "command": "launch", "name": "Gemini designer" }
+  ]
+}
